@@ -6,9 +6,9 @@ $description = '-';
 if( is_array( $definition ) )
 {
     /** @var MugoRecurrence $recurrence */
-	$recurrence = MugoRecurrence::factory( $definition[ 'type' ] );
-	$recurrence->setDefinition( $definition );
-	$description = $recurrence->__toString();
+    $recurrence = MugoRecurrence::factory( $definition[ 'type' ] );
+    $recurrence->setDefinition( $definition );
+    $description = $recurrence->__toString();
 }
 
 header( 'Content-Type: application/json' );

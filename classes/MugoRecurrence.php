@@ -5,45 +5,45 @@
  */
 class MugoRecurrence
 {
-	/** @var DateTime */
-	public $rangeEnd;
+    /** @var DateTime */
+    public $rangeEnd;
 
         /** @var DateTime */
-	public $rangeStart;
+    public $rangeStart;
 
-	public $type;
+    public $type;
 
-	public $interval;
+    public $interval;
 
-	public $day;
+    public $day;
 
-	public $weeklyWeekDay;
+    public $weeklyWeekDay;
 
-	public $monthlyType;
+    public $monthlyType;
 
-	public $monthlyWeekDay;
+    public $monthlyWeekDay;
 
-	/** @var  MugoCalendarEvent */
-	protected $event;
+    /** @var  MugoCalendarEvent */
+    protected $event;
 
-	/** @var array */
-	protected $settings;
+    /** @var array */
+    protected $settings;
 
-	protected $weekDays = array();
+    protected $weekDays = array();
 
-	/**
-	 *  @var array Number to Ordinal number
-	 */
-	private $numberToOrdinalMap = array();
+    /**
+     *  @var array Number to Ordinal number
+     */
+    private $numberToOrdinalMap = array();
 
-	/**
-	 * MugoRecurrence constructor.
-	 * @param stdClass $jsonObj
-	 * @param MugoCalendarEvent $event
-	 */
-	public function __construct( $jsonObj, $event )
-	{
-	    $this->weekDays = array(
+    /**
+     * MugoRecurrence constructor.
+     * @param stdClass $jsonObj
+     * @param MugoCalendarEvent $event
+     */
+    public function __construct( $jsonObj, $event )
+    {
+        $this->weekDays = array(
             ezpI18n::tr( 'mugo_calendar', 'Sunday' ),
             ezpI18n::tr( 'mugo_calendar', 'Monday' ),
             ezpI18n::tr( 'mugo_calendar', 'Tuesday' ),
@@ -53,7 +53,7 @@ class MugoRecurrence
             ezpI18n::tr( 'mugo_calendar', 'Saturday' ),
         );
 
-	    $this->numberToOrdinalMap =
+        $this->numberToOrdinalMap =
         [
             1 => ezpI18n::tr( 'mugo_calendar', 'first' ),
             2 => ezpI18n::tr( 'mugo_calendar', 'second' ),
@@ -88,45 +88,45 @@ class MugoRecurrence
             31 => ezpI18n::tr( 'mugo_calendar', 'thirty-first' ),
         ];
 
-		$this->type = $jsonObj->type;
-		$this->interval = $jsonObj->interval;
-		$this->day = $jsonObj->day;
-		$this->weeklyWeekDay = $jsonObj->weeklyWeekDay;
-		$this->monthlyType = $jsonObj->monthlyType;
-		$this->monthlyWeekDay = $jsonObj->monthlyWeekDay;
+        $this->type = $jsonObj->type;
+        $this->interval = $jsonObj->interval;
+        $this->day = $jsonObj->day;
+        $this->weeklyWeekDay = $jsonObj->weeklyWeekDay;
+        $this->monthlyType = $jsonObj->monthlyType;
+        $this->monthlyWeekDay = $jsonObj->monthlyWeekDay;
         $this->rangeStart = $event->start;
 
-		if( $jsonObj->end )
-		{
-			$this->rangeEnd = MugoCalendarFunctions::strToDateTime( $jsonObj->end );
-		}
+        if( $jsonObj->end )
+        {
+            $this->rangeEnd = MugoCalendarFunctions::strToDateTime( $jsonObj->end );
+        }
 
-		$this->event = $event;
-	}
+        $this->event = $event;
+    }
 
-	/**
-	 * Called before occursOnDate
-	 *
-	 * @return $this
-	 */
-	public function init()
-	{
-		$ini = eZINI::instance( 'mugo_calendar.ini' );
-		$this->settings = $ini->group( 'Calendar' );
+    /**
+     * Called before occursOnDate
+     *
+     * @return $this
+     */
+    public function init()
+    {
+        $ini = eZINI::instance( 'mugo_calendar.ini' );
+        $this->settings = $ini->group( 'Calendar' );
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * @param DateTime $date
-	 * @return bool
-	 */
-	public function occursOnDate( DateTime $date )
-	{
-		$match = false;
+    /**
+     * @param DateTime $date
+     * @return bool
+     */
+    public function occursOnDate( DateTime $date )
+    {
+        $match = false;
 
-		// Not using the translated version
-		$weekDays = array(
+        // Not using the translated version
+        $weekDays = array(
             'Sunday',
             'Monday',
             'Tuesday',
@@ -136,168 +136,168 @@ class MugoRecurrence
             'Saturday',
         );
 
-		if( $this->occursInRange( $date ) )
-		{
-			$modifyString = '';
+        if( $this->occursInRange( $date ) )
+        {
+            $modifyString = '';
 
-			switch( $this->type )
-			{
-				case 'Weekly':
-				{
-					$modifyString = $weekDays[ $this->weeklyWeekDay ] . ' this week';
-				}
-				break;
+            switch( $this->type )
+            {
+                case 'Weekly':
+                {
+                    $modifyString = $weekDays[ $this->weeklyWeekDay ] . ' this week';
+                }
+                break;
 
-				case 'Monthly':
-				{
-					switch( $this->monthlyType )
-					{
-						case 'day':
+                case 'Monthly':
+                {
+                    switch( $this->monthlyType )
+                    {
+                        case 'day':
                         {
                             // The idea is that $date day minus entry day needs to be zero to match
                             $modifyString = '+' . ( (int) $date->format( 'd' ) - $this->day ) . ' day this month';
                         }
                         break;
 
-						default:
+                        default:
                         {
                             $modifyString = $this->monthlyType . ' ' . $weekDays[ $this->monthlyWeekDay ] . ' of this Month';
                         }
                         break;
-					}
-				}
-				break;
+                    }
+                }
+                break;
 
                 case 'Yearly':
                 {
                     $modifyString = $this->event->start->format( 'jS F' );
                 }
                 break;
-			}
+            }
 
-			if( $modifyString )
-			{
-				$testDate = clone $date; /* @var $testDate DateTime */
-				$testDate->modify( $modifyString );
+            if( $modifyString )
+            {
+                $testDate = clone $date; /* @var $testDate DateTime */
+                $testDate->modify( $modifyString );
 
-				$match = $date == $testDate;
+                $match = $date == $testDate;
 
-				if(
-					$match &&
-					isset( $this->interval ) &&
-					$this->interval > 1
-				)
-				{
-					switch( $this->type )
-					{
-						case 'Monthly':
-						{
-							$tStart = $this->getRangeStart();
-							$tStart->modify( 'First day of this month' );
-							$tThis = clone $date;
-							$tThis->modify( 'First day of this month' );
+                if(
+                    $match &&
+                    isset( $this->interval ) &&
+                    $this->interval > 1
+                )
+                {
+                    switch( $this->type )
+                    {
+                        case 'Monthly':
+                        {
+                            $tStart = $this->getRangeStart();
+                            $tStart->modify( 'First day of this month' );
+                            $tThis = clone $date;
+                            $tThis->modify( 'First day of this month' );
 
-							$interval = $tStart->diff( $tThis )->m + ( $tStart->diff( $tThis )->y * 12 );
+                            $interval = $tStart->diff( $tThis )->m + ( $tStart->diff( $tThis )->y * 12 );
 
-							$match = $interval % ( $this->interval ) == 0;
-						}
-						break;
+                            $match = $interval % ( $this->interval ) == 0;
+                        }
+                        break;
 
-						case 'Weekly':
-						{
-							$tStart = $this->getFirstDayOfWeekDay( clone $this->getRangeStart() );
-							$tThis =  $this->getFirstDayOfWeekDay( clone $date );
+                        case 'Weekly':
+                        {
+                            $tStart = $this->getFirstDayOfWeekDay( clone $this->getRangeStart() );
+                            $tThis =  $this->getFirstDayOfWeekDay( clone $date );
 
-							$interval = $tStart->diff( $tThis )->format( '%a' );
-							$match = $interval % ( $this->interval * 7 ) == 0;
-						}
-						break;
-					}
-				}
-			}
-		}
+                            $interval = $tStart->diff( $tThis )->format( '%a' );
+                            $match = $interval % ( $this->interval * 7 ) == 0;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
 
-		return $match;
-	}
+        return $match;
+    }
 
-	protected function occursInRange( DateTime $date )
-	{
-		if( $date >= $this->getRangeStart() )
-		{
-			if( is_null( $this->getRangeEnd() ) || $date <= $this->getRangeEnd() )
-			{
-				return true;
-			}
-		}
+    protected function occursInRange( DateTime $date )
+    {
+        if( $date >= $this->getRangeStart() )
+        {
+            if( is_null( $this->getRangeEnd() ) || $date <= $this->getRangeEnd() )
+            {
+                return true;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	/**
-	 * @param DateTime $dateTime
-	 * @return DateTime
-	 */
-	public function getRelativeTime( DateTime $dateTime )
-	{
-		$start = new DateTime( $dateTime->format( 'Y-m-d' ) );
+    /**
+     * @param DateTime $dateTime
+     * @return DateTime
+     */
+    public function getRelativeTime( DateTime $dateTime )
+    {
+        $start = new DateTime( $dateTime->format( 'Y-m-d' ) );
 
-		return $start->diff( $dateTime )->format( '+%h hours %i minutes' );
-	}
+        return $start->diff( $dateTime )->format( '+%h hours %i minutes' );
+    }
 
-	/**
-	 * @param MugoCalendarEvent $event
-	 * @return $this
-	 */
-	public function setEvent( MugoCalendarEvent $event )
-	{
-		$this->event = $event;
-		return $this;
-	}
-	
-	/**
-	 * @param DateTime $end
-	 * @return $this
-	 */
-	public function setRangeEnd( DateTime $end )
-	{
-		$this->rangeEnd = $end;
-		return $this;
-	}
+    /**
+     * @param MugoCalendarEvent $event
+     * @return $this
+     */
+    public function setEvent( MugoCalendarEvent $event )
+    {
+        $this->event = $event;
+        return $this;
+    }
+    
+    /**
+     * @param DateTime $end
+     * @return $this
+     */
+    public function setRangeEnd( DateTime $end )
+    {
+        $this->rangeEnd = $end;
+        return $this;
+    }
 
-	/**
-	 * @return DateTime
-	 */
-	public function getRangeStart()
-	{
-		$return = null;
+    /**
+     * @return DateTime
+     */
+    public function getRangeStart()
+    {
+        $return = null;
 
-		if( $this->event )
-		{
-			if( $this->event->start )
-			{
-				$startDate = clone $this->event->start;
-				$startDate->modify( 'midnight' );
+        if( $this->event )
+        {
+            if( $this->event->start )
+            {
+                $startDate = clone $this->event->start;
+                $startDate->modify( 'midnight' );
 
-				$return = $startDate;
-			}
-		}
+                $return = $startDate;
+            }
+        }
 
-		return $return;
-	}
+        return $return;
+    }
 
-	/**
-	 * @return DateTime
-	 */
-	public function getRangeEnd()
-	{
-		return $this->rangeEnd;
-	}
+    /**
+     * @return DateTime
+     */
+    public function getRangeEnd()
+    {
+        return $this->rangeEnd;
+    }
 
     /**
      * @param string $dateFormat
      * @return string
      */
-	public function describe( $dateFormat = '%Y-%m-%d' )
+    public function describe( $dateFormat = '%Y-%m-%d' )
     {
         $return = ezpI18n::tr( 'mugo_calendar_date_description', 'every' ) . ' ';
 
@@ -353,66 +353,66 @@ class MugoRecurrence
         return $return;
     }
 
-	/**
-	 * @param DateTime $dateTime
-	 * @return DateTime
-	 */
-	protected function getFirstDayOfWeekDay( DateTime $dateTime )
-	{
-		$localDateTime = clone $dateTime;
-		$weekDay = $this->settings[ 'WeekOffset' ] ? 'Monday' : 'Sunday';
+    /**
+     * @param DateTime $dateTime
+     * @return DateTime
+     */
+    protected function getFirstDayOfWeekDay( DateTime $dateTime )
+    {
+        $localDateTime = clone $dateTime;
+        $weekDay = $this->settings[ 'WeekOffset' ] ? 'Monday' : 'Sunday';
 
-		return $localDateTime->modify( $weekDay . ' this week' );
-	}
+        return $localDateTime->modify( $weekDay . ' this week' );
+    }
 
-	//
-	// Make it usable in eztemplates
-	//
-	public function attributes()
-	{
-		return array(
-			'description',
-			'range_start',
-			'range_end',
+    //
+    // Make it usable in eztemplates
+    //
+    public function attributes()
+    {
+        return array(
+            'description',
+            'range_start',
+            'range_end',
             'type',
             'monthly_type',
             'monthly_week_day',
-		);
-	}
+        );
+    }
 
-	public function attribute( $attr, $noFunction = false )
-	{
-		switch( $attr )
-		{
-			case 'description':
-			{
-				return $this->describe();
-			}
-			break;
+    public function attribute( $attr, $noFunction = false )
+    {
+        switch( $attr )
+        {
+            case 'description':
+            {
+                return $this->describe();
+            }
+            break;
 
-			case 'range_start':
-			{
-				$start = $this->getRangeStart();
-				if( $start )
-				{
-					return $start->getTimestamp();
-				}
+            case 'range_start':
+            {
+                $start = $this->getRangeStart();
+                if( $start )
+                {
+                    return $start->getTimestamp();
+                }
 
-				return null;
-			}
-			break;
+                return null;
+            }
+            break;
 
-			case 'range_end':
-			{
-				$end = $this->getRangeEnd();
-				if( $end )
-				{
-					return $end->getTimestamp();
-				}
+            case 'range_end':
+            {
+                $end = $this->getRangeEnd();
+                if( $end )
+                {
+                    return $end->getTimestamp();
+                }
 
-				return null;
-			}
-			break;
+                return null;
+            }
+            break;
 
             case 'type':
             {
@@ -432,18 +432,18 @@ class MugoRecurrence
             }
             break;
         }
-	}
+    }
 
-	public function hasAttribute( $attr )
-	{
-		return in_array( $attr, $this->attributes() );
-	}
+    public function hasAttribute( $attr )
+    {
+        return in_array( $attr, $this->attributes() );
+    }
 
-	// optional
-	public function setAttribute( $attr, $value )
-	{
-		$this->$attr = $value;
-	}
+    // optional
+    public function setAttribute( $attr, $value )
+    {
+        $this->$attr = $value;
+    }
 
     /**
      * @return string
@@ -454,25 +454,25 @@ class MugoRecurrence
     }
 
     /**
-	 * @param string $type
-	 * @return MugoRecurrence
-	 */
-	static function factory( $type )
-	{
-		$className = 'MugoRecurrence' . $type;
+     * @param string $type
+     * @return MugoRecurrence
+     */
+    static function factory( $type )
+    {
+        $className = 'MugoRecurrence' . $type;
 
-		if( class_exists( $className ) )
-		{
-			return new $className;
-		}
-		else
-		{
-			return new MugoRecurrence();
-		}
-	}
+        if( class_exists( $className ) )
+        {
+            return new $className;
+        }
+        else
+        {
+            return new MugoRecurrence();
+        }
+    }
 
-	// DB values should have been an integer value
-	private $ordinalToNumberMap = array(
+    // DB values should have been an integer value
+    private $ordinalToNumberMap = array(
         'first' => 1,
         'second' => 2,
         'third' => 3,

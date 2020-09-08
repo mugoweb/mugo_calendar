@@ -1,99 +1,99 @@
 .occurrences .datepair .duration
 {
-	margin-left: 170px;
+    margin-left: 170px;
 }
 
 .occurrences .remove-occurrence
 {
-	margin: 2.5em 0.5em 0 0;
+    margin: 2.5em 0.5em 0 0;
 }
 
 .occurrences hr
 {
-	margin-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .bootstrap .datepair .date
 {
-	width: 145px;
-	display: inline-block;
+    width: 145px;
+    display: inline-block;
 }
 
 .bootstrap .datepair .time
 {
-	width: 45px;
-	display: inline-block;
+    width: 45px;
+    display: inline-block;
 }
 
 .bootstrap .form-check.allDay
 {
-	display: inline-block;
-	margin-left: 1em;
+    display: inline-block;
+    margin-left: 1em;
 }
 
 .bootstrap .occurrences .options select,
 .bootstrap .occurrences .options input
 {
-	display: inline-block;
-	width: auto;
+    display: inline-block;
+    width: auto;
 }
 
 .mugorecurringevent label
 {
-	display: inline;
+    display: inline;
 }
 
 .mugorecurringevent .button
 {
-	color: #44484d;
-	background: #fff;
-	border: 1px solid #cfd1d3;
-	border-radius: 3px;
-	font-size: 1em;
-	margin-left: 5px;
-	padding: 3px 6px;
-	-webkit-transition: all 300ms ease;
-	-moz-transition: all 300ms ease;
-	-ms-transition: all 300ms ease;
-	-o-transition: all 300ms ease;
-	transition: all 300ms ease;
+    color: #44484d;
+    background: #fff;
+    border: 1px solid #cfd1d3;
+    border-radius: 3px;
+    font-size: 1em;
+    margin-left: 5px;
+    padding: 3px 6px;
+    -webkit-transition: all 300ms ease;
+    -moz-transition: all 300ms ease;
+    -ms-transition: all 300ms ease;
+    -o-transition: all 300ms ease;
+    transition: all 300ms ease;
 }
 
 .mugorecurringevent > div
 {
-	margin-top: 10px;
+    margin-top: 10px;
 }
 
 .mugorecurringevent .help
 {
-	font-size: 0.8em;
-	color: darkgrey;
+    font-size: 0.8em;
+    color: darkgrey;
 }
 
 .mugorecurringevent #recurring-start-date
 {
-	border: none;
-	width: 80px;
+    border: none;
+    width: 80px;
 }
 
 .mugorecurringevent .recurrence-options > div
 {
-	margin-top: 10px;
+    margin-top: 10px;
 }
 
 .mugorecurringevent .sub-option
 {
-	display: none;
+    display: none;
 }
 
 .mugorecurringevent .template
 {
-	display: none;
+    display: none;
 }
 
 .describeRecurrence
 {
-	font-style: italic;
+    font-style: italic;
 }
 
 /* Override ezp styles */
@@ -101,5 +101,5 @@
 .bootstrap ol,
 .bootstrap ul
 {
-	margin: 0;
+    margin: 0;
 }

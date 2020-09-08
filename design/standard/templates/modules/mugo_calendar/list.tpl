@@ -1,15 +1,15 @@
 {*
-	INPUT
-	start_date
+    INPUT
+    start_date
 *}
 
 <h1>Example Listing</h1>
 <pre>
 {literal}
 {def $events = fetch( 'mugo_calendar', 'events', hash(
-	'start', $start_date,
-	'parent_node_id', 1,
-	'limit', 100,
+    'start', $start_date,
+    'parent_node_id', 1,
+    'limit', 100,
 ))}
 {/literal}
 </pre>

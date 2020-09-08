@@ -13,11 +13,11 @@ $mugoCalendarPersistentObject->setAttribute( 'reference', json_encode( $_REQUEST
 $mugoCalendarEvent = new MugoCalendarEvent( $mugoCalendarPersistentObject );
 
 $events = MugoCalendarFunctions::resolveRecurringEvent(
-	[ $mugoCalendarEvent ],
-	null,
-	null,
-	1,
-	false
+    [ $mugoCalendarEvent ],
+    null,
+    null,
+    1,
+    false
 );
 
 $result = array_values( $events );

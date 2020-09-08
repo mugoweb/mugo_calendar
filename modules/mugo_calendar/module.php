@@ -1,34 +1,34 @@
 <?php
 $Module = array(
-	'name' => 'Mugo Calendar',
-	'variable_params' => true,
+    'name' => 'Mugo Calendar',
+    'variable_params' => true,
 );
 
 $ViewList = array();
 
 $ViewList[ 'view' ] = array(
-	'functions' => array( 'public' ),
-	'script' => 'view.php',
+    'functions' => array( 'public' ),
+    'script' => 'view.php',
 );
 
 $ViewList[ 'list' ] = array(
-	'functions' => array( 'public' ),
-	'script' => 'list.php',
+    'functions' => array( 'public' ),
+    'script' => 'list.php',
 );
 
 $ViewList[ 'fetch' ] = array(
-	'functions' => array( 'public' ),
-	'script' => 'fetch.php',
+    'functions' => array( 'public' ),
+    'script' => 'fetch.php',
 );
 
 $ViewList[ 'describe_recurrence' ] = array(
-	'functions' => array( 'public' ),
-	'script' => 'describe_recurrence.php',
+    'functions' => array( 'public' ),
+    'script' => 'describe_recurrence.php',
 );
 
 $ViewList[ 'resolve_recurrence' ] = array(
-	'functions' => array( 'public' ),
-	'script' => 'resolve_recurrence.php',
+    'functions' => array( 'public' ),
+    'script' => 'resolve_recurrence.php',
 );
 
 $FunctionList = array();

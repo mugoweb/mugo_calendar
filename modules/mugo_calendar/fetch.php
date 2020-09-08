@@ -5,19 +5,19 @@ $startDate = $_REQUEST[ 'start' ];
 $endDate = $_REQUEST[ 'end' ];
 
 $result = eZFunctionHandler::execute( 'mugo_calendar', 'events', array(
-	'start' => $startDate,
-	'end' => $endDate,
-	'parent_node_id' => $parentNodeId,
+    'start' => $startDate,
+    'end' => $endDate,
+    'parent_node_id' => $parentNodeId,
 ));
 
 $fcEvents = array();
 
 if( !empty( $result ) )
 {
-	foreach( $result as $event )
-	{
-		$fcEvents[] = $event->toFullCalendarEvent();
-	}
+    foreach( $result as $event )
+    {
+        $fcEvents[] = $event->toFullCalendarEvent();
+    }
 }
 
 header( 'Content-Type: application/json' );
