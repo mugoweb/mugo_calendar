@@ -72,8 +72,9 @@ class MugoCalendarFunctions
 	 * @param MugoCalendarEvent[] $events
 	 * @param DateTime $startDay
 	 * @param DateTime $endDay
-	 * @param null $limit
+	 * @param int|null $limit
 	 * @param $withExceptions
+     * @param int|null $fetchLimit allowing "overfetching"
 	 * @return MugoCalendarEvent[]
 	 */
 	public static function resolveRecurringEvent(
@@ -81,10 +82,13 @@ class MugoCalendarFunctions
 		DateTime $startDay = null,
 		DateTime $endDay = null,
 		$limit = null,
-		$withExceptions = true
+		$withExceptions = true,
+        $fetchLimit = null
 	)
 	{
-		// Force start of the day
+	    $fetchLimit = $fetchLimit ?: $limit;
+
+        // Force start of the day
 		$rangeStart = null;
 		$rangeEnd = null;
 		if( $startDay )
@@ -102,20 +106,36 @@ class MugoCalendarFunctions
 			$events,
 			$rangeStart,
 			$rangeEnd,
-			$limit
+            $fetchLimit
 		);
 
 		if( $withExceptions )
 		{
+		    $beforeCount = count( $resolvedEvents );
 			$resolvedEvents = self::excludeExceptions( $resolvedEvents );
+
+			if(
+			    $limit !== null &&
+			    $beforeCount == $fetchLimit && // there is potentially more occurrences
+                count( $resolvedEvents ) < $limit // lost due to the skip exceptions
+            )
+            {
+                return self::resolveRecurringEvent(
+                    $events,
+                    $startDay,
+                    $endDay,
+                    $limit,
+                    true,
+                    ($fetchLimit * 2)
+                );
+            }
 		}
 
-		// Following if statement probably won't ever get executed
-		if( is_null( $resolvedEvents ) )
-		{
-			$resolvedEvents = array();
-			eZDebug::writeWarning( '"NULL" value for $resolvedEvents - fix me.', __CLASS__ );
-		}
+		// after "overfetching" due to exceptions we want to force the limit
+		if( $limit !== null && count( $resolvedEvents ) > $limit )
+        {
+            $resolvedEvents = array_splice( $resolvedEvents, 0, $limit );
+        }
 
 		return $resolvedEvents;
 	}
@@ -336,7 +356,7 @@ class MugoCalendarFunctions
 	 * @param MugoCalendarEvent[] $events
 	 * @param DateTime $start
 	 * @param DateTime $end
-	 * @param integer $limit
+	 * @param int|null $limit
 	 * @return MugoCalendarEvent[]
 	 */
 	private static function resolveAllRecurringEvents(
@@ -427,7 +447,6 @@ class MugoCalendarFunctions
 
 		return $newEvent;
 	}
-
 
 	/**
 	 * @param DateTime $start
