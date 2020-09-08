@@ -32,7 +32,11 @@ class MugoCalendarEvent
 	/* @var mixed Any data you'd like to store in context of an event */
 	public $data;
 
-	/**
+	/** @var string See http://userguide.icu-project.org/formatparse/datetime */
+    private static $dayFormat = 'EEEE, d MMMM y';
+    private static $timeFormat = 'hh:mmaaa';
+
+    /**
 	 * MugoCalendarEvent constructor.
 	 * @param array $eventData
 	 */
@@ -225,6 +229,12 @@ class MugoCalendarEvent
 			}
 			break;
 
+            case 'id':
+            {
+                return $this->id;
+            }
+            break;
+
 			case 'data':
 			{
 				return $this->data;
@@ -355,7 +365,67 @@ class MugoCalendarEvent
 		}
 	}
 
-	/**
+	public function __toString()
+    {
+        if( $this->recurrence )
+        {
+            return $this->recurrence->__toString();
+        }
+        else
+        {
+            $return = '';
+
+            $formatter = new IntlDateFormatter( Locale::getDefault(), IntlDateFormatter::SHORT, IntlDateFormatter::SHORT );
+
+            if( $this->start->diff( $this->end )->days > 0 )
+            {
+                $formatter->setPattern( self::$dayFormat );
+                $return .= $formatter->format( $this->start );
+
+                if( !$this->isAllDay )
+                {
+                    $formatter->setPattern( self::$timeFormat );
+                    $return .= ' '. $formatter->format( $this->start );
+                }
+
+                $return .= ' ';
+                $return .= ezpI18n::tr( 'mugo_calendar_date_description','to' );
+                $return .= ' ';
+
+                $formatter->setPattern( self::$dayFormat );
+                $return .= $formatter->format( $this->end );
+
+                if( !$this->isAllDay )
+                {
+                    $formatter->setPattern( self::$timeFormat );
+                    $return .= ' '. $formatter->format( $this->end );
+                }
+            }
+            else
+            {
+                $formatter->setPattern( self::$dayFormat );
+                $return .= $formatter->format( $this->start );
+
+                $return .= ' ';
+
+                if( $this->isAllDay )
+                {
+                    $return .= ezpI18n::tr( 'mugo_calendar_date_description','all day' );
+                }
+                else
+                {
+                    $formatter->setPattern( self::$timeFormat );
+                    $return .= $formatter->format( $this->start );
+                    $return .= '-';
+                    $return .= $formatter->format( $this->end );
+                }
+            }
+
+            return $return;
+        }
+    }
+
+    /**
 	 *
 	 */
 	public function __clone()
