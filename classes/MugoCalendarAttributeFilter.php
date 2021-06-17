@@ -1,18 +1,15 @@
 <?php
 
-/**
- *
- */
 class MugoCalendarAttributeFilter
 {
     /**
-     * Gets events for a given time range
+     * Gets events for a given time range: $params[ 'start' ] to $params[ 'end' ]
      *
      * @param array $params
      *
      * @return array
      */
-    public function createSqlPartsRange( $params )
+    public function createSqlPartsRange( array $params ) : array
     {
         $returnArray = array( 'tables' => '', 'joins'  => '', 'columns' => '' );
 

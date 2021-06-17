@@ -1,6 +1,6 @@
 <?php
 
-$parentNodeId = (int) $_REQUEST[ 'parent_node_id' ] ? (int) $_REQUEST[ 'parent_node_id' ] : 1;
+$parentNodeId = (int) $_REQUEST[ 'parent_node_id' ] ?: 1;
 $startDate = $_REQUEST[ 'start' ];
 $endDate = $_REQUEST[ 'end' ];
 

@@ -4,6 +4,7 @@ Supporting recurring events and exceptions.
 
 ## Installation
 * Add extension to the ezp extension directory
+* Import the DB schema changes from sql/mysql/schema.sql into your DB 
 * Enable the extension in the settings
 * Clear cache
 * Regenerate autoload map

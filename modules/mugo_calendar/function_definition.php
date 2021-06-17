@@ -31,9 +31,9 @@ $FunctionList[ 'events' ] = array(
         ),
         array(
             'name' => 'subtree',
-            'type' => 'integer',
+            'type' => 'bool',
             'required' => false,
-            'default' => null,
+            'default' => true,
         ),
         array(
             'name' => 'filters',

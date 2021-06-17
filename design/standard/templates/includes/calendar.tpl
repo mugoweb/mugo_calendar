@@ -10,7 +10,7 @@
 {ezscript_require( 'ezjsc::jquery' )}
 {ezscript_require( 'moment.min.js' )}
 {ezscript_require( 'fullcalendar.min.js' )}
-{ezscript_require( 'jquery.mugocalendar.js' )}
+{ezscript_require( 'jquery.mugofullcalendar.js' )}
 
 {if is_unset( $calendarConfig )}
     {def $calendarConfig = '{ "header": { "left": "prev,next today", "center": "title", "right": "" \} \}' }
@@ -23,14 +23,14 @@
         {literal}
         $(function()
         {
-            var eZBaseUrl = eZBaseUrl ? eZBaseUrl : '';
+            var dataUrl = {/literal}"{'/mugo_calendar/fetch'|ezurl( 'no' )}"{/literal};
             var weekOffset = {/literal}{ezini( 'Calendar', 'WeekOffset', 'mugo_calendar.ini' )}{literal};
             var parentNodeId = {/literal}{$parent_node_id}{literal};
             var config = JSON.parse( '{/literal}{$calendarConfig}{literal}' );
 
-            $( '#calendar' ).mugocalendar(
+            $( '#calendar' ).mugofullcalendar(
             {
-                baseUrl: eZBaseUrl,
+                dataServiceUrl: dataUrl,
                 parentNodeId: parentNodeId,
                 weekOffset: weekOffset,
                 calendarConfigOverride: config,

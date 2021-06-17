@@ -6,18 +6,18 @@ class MugoCalendarFetchFunction
      * @param int $startTime
      * @param int $endTime
      * @param int $parentNodeId
-     * @param $subtree
-     * @param $filter
+     * @param bool $subtree
+     * @param array $filter
      * @param int $limit
      * @return array
      */
     public static function fetchEvents(
         $startTime,
         $endTime,
-        $parentNodeId,
-        $subtree,
-        $filter,
-        $limit
+        int $parentNodeId,
+        bool $subtree = true,
+        array $filter = null,
+        int $limit = null
     )
     {
         return array( 'result' => MugoCalendarFunctions::fetchEvents(

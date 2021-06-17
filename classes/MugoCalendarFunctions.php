@@ -8,20 +8,21 @@ class MugoCalendarFunctions
      * 2) Given start with limit
      *
      * @param DateTime $start
-     * @param DateTime $end
+     * @param DateTime|null $end
      * @param int $parentNodeId
-     * @param $subtree
-     * @param $filters
-     * @param int $limit
+     * @param bool $subtree
+     * @param array|null $filters
+     * @param int|null $limit
+     *
      * @return MugoCalendarEvent[]
      */
     public static function fetchEvents(
         DateTime $start,
         DateTime $end = null,
-        $parentNodeId = 1,
-        $subtree = true,
-        $filters = null,
-        $limit = null
+        int $parentNodeId = 1,
+        bool $subtree = true,
+        array $filters = null,
+        int $limit = null
     )
     {
         $chronologicalSort = true;
@@ -205,7 +206,7 @@ class MugoCalendarFunctions
         }
     }
 
-    protected function getEventNodesFetchParameters(
+    protected static function getEventNodesFetchParameters(
         $start,
         $end,
         $parentNodeId,
