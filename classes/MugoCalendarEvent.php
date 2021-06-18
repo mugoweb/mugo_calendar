@@ -27,8 +27,14 @@ class MugoCalendarEvent
 	{
 		$this->mugoCalendarEventDefinition = $eventDefinition;
 
-		$this->start = clone $eventDefinition->getStartDateTime();
-		$this->end = clone $eventDefinition->getEndDateTime();
+		if( $eventDefinition->getStartDateTime() )
+		{
+			$this->start = clone $eventDefinition->getStartDateTime();
+		}
+		if( $eventDefinition->getEndDateTime() )
+		{
+			$this->end = clone $eventDefinition->getEndDateTime();
+		}
 
 		if( $eventDefinition->getType() == MugoCalendarPersistentObject::TYPE_RECURRING )
 		{
@@ -56,7 +62,7 @@ class MugoCalendarEvent
 	/**
 	 * @return DateTime
 	 */
-	public function getStart(): DateTime
+	public function getStart():? DateTime
 	{
 		return $this->start;
 	}
@@ -72,7 +78,7 @@ class MugoCalendarEvent
 	/**
 	 * @return DateTime
 	 */
-	public function getEnd(): DateTime
+	public function getEnd():? DateTime
 	{
 		return $this->end;
 	}
@@ -129,4 +135,61 @@ class MugoCalendarEvent
 
 		return $return;
 	}
+
+	// For ez template context
+
+	public function attributes()
+	{
+		return array(
+			'start',
+			'end',
+			'id',
+			'event_definition',
+		);
+	}
+
+	/**
+	 * @param $attr
+	 * @param bool $noFunction
+	 * @return mixed
+	 */
+	public function attribute( $attr, $noFunction = false )
+	{
+		switch( $attr )
+		{
+			case 'start':
+				{
+					return is_object( $this->start ) ? $this->start->getTimestamp() : null;
+				}
+				break;
+
+			case 'end':
+				{
+					return is_object( $this->end ) ? $this->end->getTimestamp() : null;
+				}
+				break;
+
+			case 'id':
+				{
+					return $this->id;
+				}
+				break;
+
+			case 'event_definition':
+				{
+					return $this->mugoCalendarEventDefinition;
+				}
+				break;
+		}
+	}
+
+	/**
+	 * @param $attr
+	 * @return bool
+	 */
+	public function hasAttribute( $attr )
+	{
+		return in_array( $attr, $this->attributes() );
+	}
+
 }

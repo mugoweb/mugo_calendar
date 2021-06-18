@@ -207,7 +207,7 @@ class MugoCalendarFunctions
         }
         else
         {
-            $parentNode = self::getNode( $context );
+            $parentNode = self::getParentNode( $context );
             return $parentNode->attribute( 'class_identifier' ) == $context->attribute( 'class_identifier' );
         }
     }
@@ -519,18 +519,21 @@ class MugoCalendarFunctions
                     {
                         $exceptions = $exceptionAttribute->attribute( 'content' );
 
-                        // exceptions always have a single event
+                        // exceptions always have a single event definition
                         /** @var MugoCalendarEventDefinition $exceptionDefinition */
                         $exceptionDefinition = $exceptions[0];
                         $exceptionDefinition->node = $exceptionNode;
 
-                        $exception = MugoCalendarEvent::constructByCalendarEventDefinition(
+                        $exception = new MugoCalendarEventException(
 							$exceptionDefinition
 						);
 
-                        if( $exception->getStart() )
+                        if( $exception->isSkipException() )
                         {
-                            // Replace entry with exception
+							unset( $events[ $exception->getId() ] );
+                        }
+                        else
+                        {
 							if( isset( $events[ $exception->getId() ] ) )
 							{
 								$events[ $exception->getId() ] = $exception;
@@ -539,11 +542,6 @@ class MugoCalendarFunctions
 							{
 								// Exception is out of sync - report it
 							}
-                        }
-                        else
-                        {
-                            // filter out 'skip' exceptions
-                            unset( $events[ $exception->getId() ] );
                         }
                     }
                 }
@@ -577,16 +575,26 @@ class MugoCalendarFunctions
      * @param eZContentObject $eZObj
      * @return eZContentObjectTreeNode
      */
-    private static function getNode( $eZObj )
+    private static function getParentNode( $eZObj )
     {
-        $return = $eZObj->attribute('current')->attribute('parent_nodes')[0];
+    	$return = null;
 
-        if( !$return )
-        {
-            $return = eZContentObjectTreeNode::fetch(
-                $eZObj->attribute( 'current' )->attribute( 'main_parent_node_id' )
-            );
-        }
+    	if( $eZObj->attribute( 'current' ) )
+		{
+			$return = eZContentObjectTreeNode::fetch(
+				$eZObj->attribute( 'current' )->attribute( 'main_parent_node_id' )
+			);
+		}
+
+    	if( !$return )
+		{
+			$nodeAssignment = $eZObj->attribute('current')->attribute('parent_nodes')[0];
+
+			if( $nodeAssignment )
+			{
+				$return = eZContentObjectTreeNode::fetch( $nodeAssignment->ParentNode );
+			}
+		}
 
         return $return;
     }

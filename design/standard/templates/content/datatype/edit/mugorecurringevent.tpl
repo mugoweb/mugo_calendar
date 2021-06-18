@@ -6,7 +6,7 @@
     'jquery.mugodatepair.js',
     'jquery.datepair.min.js',
     'datepair.js',
-    'moment.min.js',
+    'moment.min.js'
 ) )}
 {ezcss_require( array(
     'mugo_calendar.css',
