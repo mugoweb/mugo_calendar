@@ -23,7 +23,7 @@ class MugoRecurrence
 
     public $monthlyWeekDay;
 
-    /** @var  MugoCalendarEvent */
+    /** @var  MugoCalendarEventDefinition */
     protected $event;
 
     /** @var array */
@@ -39,7 +39,7 @@ class MugoRecurrence
     /**
      * MugoRecurrence constructor.
      * @param stdClass $jsonObj
-     * @param MugoCalendarEvent $event
+     * @param MugoCalendarEventDefinition $event
      */
     public function __construct( $jsonObj, $event )
     {
@@ -245,10 +245,10 @@ class MugoRecurrence
     }
 
     /**
-     * @param MugoCalendarEvent $event
+     * @param MugoCalendarEventDefinition $event
      * @return $this
      */
-    public function setEvent( MugoCalendarEvent $event )
+    public function setEvent( MugoCalendarEventDefinition $event )
     {
         $this->event = $event;
         return $this;

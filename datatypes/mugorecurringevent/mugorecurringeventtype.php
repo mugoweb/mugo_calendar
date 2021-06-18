@@ -160,11 +160,9 @@ class MugoRecurringEventType extends eZDataType
         {
             foreach( $eventsData as $entry )
             {
-                //TODO: remove next line
-                $entry->contentobject = $objectAttribute->attribute( 'object' );
                 $entry->objectAttribute = $objectAttribute;
 
-                $return[] = new MugoCalendarEvent( $entry );
+                $return[] = new MugoCalendarEventDefinition( $entry );
             }
         }
 

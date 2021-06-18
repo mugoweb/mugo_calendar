@@ -15,7 +15,6 @@ $FunctionList[ 'events' ] = array(
             'name' => 'start',
             'type' => 'string',
             'required' => true,
-            'default' => null,
         ),
         array(
             'name' => 'end',
@@ -25,9 +24,9 @@ $FunctionList[ 'events' ] = array(
         ),
         array(
             'name' => 'parent_node_id',
-            'type' => 'string',
+            'type' => 'int',
             'required' => false,
-            'default' => null,
+            'default' => 1,
         ),
         array(
             'name' => 'subtree',
@@ -63,7 +62,6 @@ $FunctionList[ 'resolve_recurrence' ] = array(
             'name' => 'events',
             'type' => 'array',
             'required' => true,
-            'default' => null,
         ),
         array(
             'name' => 'start',
@@ -81,7 +79,7 @@ $FunctionList[ 'resolve_recurrence' ] = array(
             'name' => 'limit',
             'type' => 'integer',
             'required' => false,
-            'default' => false,
+            'default' => null,
         ),
         array(
             'name' => 'with_exceptions',

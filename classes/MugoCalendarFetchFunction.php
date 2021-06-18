@@ -1,8 +1,14 @@
 <?php
 
+/**
+ * Class MugoCalendarFetchFunction
+ * Wrapper to MugoCalendarFunctions
+ * See modules/mugo_calendar/function_definition.php
+ */
 class MugoCalendarFetchFunction
 {
     /**
+	 *
      * @param int $startTime
      * @param int $endTime
      * @param int $parentNodeId
@@ -13,11 +19,11 @@ class MugoCalendarFetchFunction
      */
     public static function fetchEvents(
         $startTime,
-        $endTime,
-        int $parentNodeId,
-        bool $subtree = true,
-        array $filter = null,
-        int $limit = null
+        $endTime = null,
+        $parentNodeId = 1,
+        $subtree = true,
+        $filter = null,
+        $limit = null
     )
     {
         return array( 'result' => MugoCalendarFunctions::fetchEvents(
@@ -31,7 +37,7 @@ class MugoCalendarFetchFunction
     }
 
     /**
-     * @param MugoCalendarEvent[] $recurringEvents
+     * @param MugoCalendarEventDefinition[] $recurringEvents
      * @param int $startTime
      * @param int $endTime
      * @param int $limit
@@ -40,8 +46,8 @@ class MugoCalendarFetchFunction
      */
     public static function resolveRecurringEvent(
         $recurringEvents,
-        $startTime,
-        $endTime,
+        $startTime = null,
+        $endTime = null,
         $limit = null,
         $withExceptions = true
     )

@@ -14,7 +14,7 @@ class MugoCalendarFunctions
      * @param array|null $filters
      * @param int|null $limit
      *
-     * @return MugoCalendarEvent[]
+     * @return MugoCalendarEventDefinition[]
      */
     public static function fetchEvents(
         DateTime $start,
@@ -25,6 +25,7 @@ class MugoCalendarFunctions
         int $limit = null
     )
     {
+    	// Currently hardcoded to 'true'
         $chronologicalSort = true;
 
         if( $start !== null && $end !== null )
@@ -41,7 +42,7 @@ class MugoCalendarFunctions
                 $filters
             );
         }
-        else
+        elseif( $start !== null && $limit > 0 )
         {
             // force beginning of day
             $startDay = $start->modify( 'midnight' );
@@ -54,6 +55,10 @@ class MugoCalendarFunctions
                 $limit
             );
         }
+        else
+		{
+			// unsupported parameter combination
+		}
 
         if( $chronologicalSort )
         {
@@ -70,21 +75,21 @@ class MugoCalendarFunctions
     }
 
     /**
-     * @param MugoCalendarEvent[] $events
+     * @param MugoCalendarEventDefinition[] $eventDefinitions
      * @param DateTime $startDay
      * @param DateTime $endDay
      * @param int|null $limit
      * @param $withExceptions
      * @param int|null $fetchLimit allowing "overfetching"
-     * @return MugoCalendarEvent[]
+     * @return MugoCalendarEventDefinition[]
      */
     public static function resolveRecurringEvent(
-        $events,
-        DateTime $startDay = null,
-        DateTime $endDay = null,
-        $limit = null,
-        $withExceptions = true,
-        $fetchLimit = null
+		$eventDefinitions,
+		DateTime $startDay = null,
+		DateTime $endDay = null,
+		int $limit = null,
+		bool $withExceptions = true,
+		int $fetchLimit = null
     )
     {
         $fetchLimit = $fetchLimit ?: $limit;
@@ -94,6 +99,7 @@ class MugoCalendarFunctions
         $rangeEnd = null;
         if( $startDay )
         {
+        	// Not sure why a clone is needed
             $rangeStart = clone $startDay;
             $rangeStart->modify( 'Today midnight' );
         }
@@ -103,8 +109,8 @@ class MugoCalendarFunctions
             $rangeEnd->modify( 'Today midnight' );
         }
 
-        $resolvedEvents = self::resolveAllRecurringEvents(
-            $events,
+        $events = self::resolveAllRecurringEvents(
+            $eventDefinitions,
             $rangeStart,
             $rangeEnd,
             $fetchLimit
@@ -112,17 +118,17 @@ class MugoCalendarFunctions
 
         if( $withExceptions )
         {
-            $beforeCount = count( $resolvedEvents );
-            $resolvedEvents = self::excludeExceptions( $resolvedEvents );
+            $beforeCount = count( $events );
+            $events = self::excludeExceptions( $events );
 
             if(
                 $limit !== null &&
                 $beforeCount == $fetchLimit && // there is potentially more occurrences
-                count( $resolvedEvents ) < $limit // lost due to the skip exceptions
+                count( $events ) < $limit // lost due to the skip exceptions
             )
             {
                 return self::resolveRecurringEvent(
-                    $events,
+                    $eventDefinitions,
                     $startDay,
                     $endDay,
                     $limit,
@@ -133,12 +139,12 @@ class MugoCalendarFunctions
         }
 
         // after "overfetching" due to exceptions we want to force the limit
-        if( $limit !== null && count( $resolvedEvents ) > $limit )
+        if( $limit !== null && count( $events ) > $limit )
         {
-            $resolvedEvents = array_splice( $resolvedEvents, 0, $limit );
+            $events = array_splice( $events, 0, $limit );
         }
 
-        return $resolvedEvents;
+        return $events;
     }
 
     /**
@@ -354,50 +360,41 @@ class MugoCalendarFunctions
     }
 
     /**
-     * @param MugoCalendarEvent[] $events
+     * @param MugoCalendarEventDefinition[] $eventDefinitions
      * @param DateTime $start
      * @param DateTime $end
      * @param int|null $limit
      * @return MugoCalendarEvent[]
      */
     private static function resolveAllRecurringEvents(
-        $events,
-        $start = null,
-        $end = null,
-        $limit = null
-    )
+		array $eventDefinitions,
+		DateTime $start = null,
+		DateTime $end = null,
+		int $limit = null
+    ) : array
     {
         $return = array();
 
-        if( !empty( $events ) )
+        if( !empty( $eventDefinitions ) )
         {
-            $range = self::getRecurringRange( $start, $end, $events );
+            $range = self::getRecurringRange( $start, $end, $eventDefinitions );
 
             /* @var $loopDay DateTime */
             $loopDay = clone $range[ 'start' ];
             $iteration = 1;
             while( $loopDay <= $range[ 'end' ] )
             {
-                foreach( $events as $event )
+                foreach( $eventDefinitions as $eventDefinition )
                 {
-                    if( $event->occursOnDate( $loopDay ) )
+                    if( $eventDefinition->occursOnDate( $loopDay ) )
                     {
-                        // resolve recurrence
-                        // TODO: make the distinction in cloneLoopDayEvent if necessary
-                        if( $event->type == MugoCalendarPersistentObject::TYPE_RECURRING )
-                        {
-                            $newEvent = self::cloneLoopDayEvent( $event, $loopDay );
-                        }
-                        else
-                        {
-                            $newEvent = clone $event;
-                            $newEvent->id = self::buildEventId(
-                                $event->start->getTimestamp(),
-                                $event->getObjectAttribute()->ID
-                            );
-                        }
+                    	$newEvent = new MugoCalendarEvent(
+							$eventDefinition,
+							$loopDay
+						);
 
-                        $return[ $newEvent->id ] = $newEvent;
+                    	// array format used in order to filter out exceptions
+                        $return[ $newEvent->getId() ] = $newEvent;
 
                         if( $limit && count( $return ) >= $limit )
                         {
@@ -415,44 +412,11 @@ class MugoCalendarFunctions
     }
 
     /**
-     * @param MugoCalendarEvent $event
-     * @param DateTime $loopDay
-     * @return MugoCalendarEvent
-     */
-    private static function cloneLoopDayEvent(
-        MugoCalendarEvent $event,
-        DateTime $loopDay
-    )
-    {
-        $newEvent = clone $event;
-
-        /*
-         * using start date (full day time) to calculate
-         * start/end time for recurrence instance
-         */
-        $startDay = clone $event->getStartDateTime();
-        $startDay->modify( 'midnight' );
-
-        // diff is the difference of eventStartDay and loopDay
-        $diff =
-            (int) $loopDay->diff( $startDay )->format( '%a' );
-
-        $newEvent->start->modify( '+'. $diff .' days');
-        $newEvent->end->modify( '+'. $diff .' days' );
-
-        // update id - later we match exceptions using that ID
-        $newEvent->id = self::buildEventId(
-            $newEvent->start->getTimestamp(),
-            $event->getObjectAttribute()->ID
-        );
-
-        return $newEvent;
-    }
-
-    /**
+	 * Optimize the range, fetch will be more efficient
+	 *
      * @param DateTime $start
      * @param DateTime $end
-     * @param MugoCalendarEvent[] $events
+     * @param MugoCalendarEventDefinition[] $events
      * @return array
      */
     private static function getRecurringRange(
@@ -525,10 +489,10 @@ class MugoCalendarFunctions
      * remove an entry in the array. Other exceptions override an entry in the
      * array
      *
-     * @param array $events Events for a given time range for the given $recurringEvent
+     * @param MugoCalendarEvent[] $events Events for a given time range for the given $recurringEvent
      * @return MugoCalendarEvent[]
      */
-    private static function excludeExceptions( $events )
+    private static function excludeExceptions( array $events ) : array
     {
         $ids = array_keys( $events );
 
@@ -536,7 +500,7 @@ class MugoCalendarFunctions
         {
             $exceptionNodes = eZFunctionHandler::execute( 'content', 'tree', array(
                 // parent_node_id limit is a required parameter in ezp
-                'parent_node_id' => 2,
+                'parent_node_id' => 1,
                 'extended_attribute_filter' => array(
                     'id' => 'MugoCalendarAttributeByIds',
                     'params' => array(
@@ -556,19 +520,30 @@ class MugoCalendarFunctions
                         $exceptions = $exceptionAttribute->attribute( 'content' );
 
                         // exceptions always have a single event
-                        /** @var MugoCalendarEvent $exception */
-                        $exception = $exceptions[0];
-                        $exception->node = $exceptionNode;
+                        /** @var MugoCalendarEventDefinition $exceptionDefinition */
+                        $exceptionDefinition = $exceptions[0];
+                        $exceptionDefinition->node = $exceptionNode;
 
-                        if( $exception->start )
+                        $exception = MugoCalendarEvent::constructByCalendarEventDefinition(
+							$exceptionDefinition
+						);
+
+                        if( $exception->getStart() )
                         {
                             // Replace entry with exception
-                            $events[ $exception->instance ] = $exception;
+							if( isset( $events[ $exception->getId() ] ) )
+							{
+								$events[ $exception->getId() ] = $exception;
+							}
+							else
+							{
+								// Exception is out of sync - report it
+							}
                         }
                         else
                         {
                             // filter out 'skip' exceptions
-                            unset( $events[ $exception->instance ] );
+                            unset( $events[ $exception->getId() ] );
                         }
                     }
                 }
@@ -596,16 +571,6 @@ class MugoCalendarFunctions
         }
 
         return false;
-    }
-
-    /**
-     * @param int $startTime
-     * @param int $attributeId
-     * @return string
-     */
-    private static function buildEventId( $startTime, $attributeId )
-    {
-        return $startTime . '-' . $attributeId;
     }
 
     /**
