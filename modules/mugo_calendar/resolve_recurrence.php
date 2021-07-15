@@ -10,10 +10,10 @@ $mugoCalendarPersistentObject->setAttribute( 'type', MugoCalendarPersistentObjec
 $mugoCalendarPersistentObject->setAttribute( 'recurrence_end',  $_REQUEST[ 'rangeEnd' ] );
 $mugoCalendarPersistentObject->setAttribute( 'reference', json_encode( $_REQUEST ) );
 
-$mugoCalendarEvent = new MugoCalendarEventDefinition( $mugoCalendarPersistentObject );
+$mugoCalendarEventDefinition = MugoCalendarEventDefinition::factory( $mugoCalendarPersistentObject );
 
 $events = MugoCalendarFunctions::resolveRecurringEvent(
-    [ $mugoCalendarEvent ],
+    [ $mugoCalendarEventDefinition ],
     null,
     null,
     1,

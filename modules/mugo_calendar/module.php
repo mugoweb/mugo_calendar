@@ -21,11 +21,6 @@ $ViewList[ 'fetch' ] = array(
     'script' => 'fetch.php',
 );
 
-$ViewList[ 'describe_recurrence' ] = array(
-    'functions' => array( 'public' ),
-    'script' => 'describe_recurrence.php',
-);
-
 $ViewList[ 'resolve_recurrence' ] = array(
     'functions' => array( 'public' ),
     'script' => 'resolve_recurrence.php',

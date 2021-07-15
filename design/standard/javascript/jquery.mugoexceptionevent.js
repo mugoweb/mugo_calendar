@@ -89,7 +89,7 @@
         {
             var self = this;
 
-            $(self.element).find( '.instance' ).val( event.instance );
+            $(self.element).find( '.instance' ).val( event.for );
 
             if( event.start )
             {

@@ -416,13 +416,13 @@ class MugoCalendarFunctions
 	 *
      * @param DateTime $start
      * @param DateTime $end
-     * @param MugoCalendarEventDefinition[] $events
+     * @param MugoCalendarEventDefinition[] $eventDefinitions
      * @return array
      */
     private static function getRecurringRange(
-        $start = null,
-        $end = null,
-        $events = []
+		$start = null,
+		$end = null,
+		$eventDefinitions = []
     )
     {
         // I hope nobody is running that code in the year of 4082
@@ -431,7 +431,7 @@ class MugoCalendarFunctions
             'end' => is_null( $end ) ? self::strToDateTime( '@66666666666' )->modify( 'midnight' ) : $end,
         );
 
-        if( !empty( $events ) )
+        if( !empty( $eventDefinitions ) )
         {
             // Do the extra effort of limiting the range
             if( ( (int) $return[ 'start' ]->diff( $return[ 'end' ] )->format( '%a' ) ) > 100 )
@@ -439,15 +439,15 @@ class MugoCalendarFunctions
                 $minEventStart = $return[ 'end' ];
                 $maxEventEnd = $return[ 'start' ];
 
-                foreach( $events as $event )
+                foreach( $eventDefinitions as $eventDefinition )
                 {
-                    if( $event->type == MugoCalendarPersistentObject::TYPE_RECURRING )
+                    if( $eventDefinition instanceof MugoCalendarRecurringEventDefinition)
                     {
-                        $eventStart = clone $event->recurrence->getRangeStart();
+                        $eventStart = clone $eventDefinition->getRangeStart();
 
-                        if( $event->recurrence->getRangeEnd() )
+                        if( $eventDefinition->getRangeEnd() )
                         {
-                            $eventEnd = clone $event->recurrence->getRangeEnd();
+                            $eventEnd = clone $eventDefinition->getRangeEnd();
                         }
                         else
                         {
@@ -456,8 +456,8 @@ class MugoCalendarFunctions
                     }
                     else
                     {
-                        $eventStart = clone $event->getStartDateTime();
-                        $eventEnd = clone $event->getEndDateTime();
+                        $eventStart = clone $eventDefinition->getStartDateTime();
+                        $eventEnd = clone $eventDefinition->getEndDateTime();
                     }
 
                     if( $eventStart < $minEventStart )

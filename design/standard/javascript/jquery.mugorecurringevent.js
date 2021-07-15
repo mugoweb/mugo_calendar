@@ -142,28 +142,29 @@
                 timeStep: self.options.timeStep,
             } );
 
-            if( values && values.recurrence )
+            // recurring occurrences
+            if( values && values.type == 2 )
             {
                 occurrence.find( '.type' )
-                    .val( 'recurring' )
+                    .val( 'recurring' ) //TODO: work with int values
                     .change();
 
-                occurrence.find( '.interval' ).val( values.recurrence.interval );
+                occurrence.find( '.interval' ).val( values.interval );
                 occurrence.find( '.recurrenceType' )
-                    .val( values.recurrence.type )
+                    .val( values.recurrenceType )
                     .change();
 
-                occurrence.find( '.weeklyWeekDay' ).val( values.recurrence.weeklyWeekDay );
+                occurrence.find( '.weeklyWeekDay' ).val( values.weeklyWeekDay );
                 occurrence.find( '.monthlyType' )
-                    .val( values.recurrence.monthlyType )
+                    .val( values.monthlyType )
                     .change();
 
-                occurrence.find( '.day' ).val( values.recurrence.day );
-                occurrence.find( '.monthlyWeekDay' ).val( values.recurrence.monthlyWeekDay );
+                occurrence.find( '.day' ).val( values.day );
+                occurrence.find( '.monthlyWeekDay' ).val( values.monthlyWeekDay );
 
-                if( values.recurrence.rangeEnd )
+                if( values.rangeEnd )
                 {
-                    occurrence.find( '.rangeEnd' ).val( parseDateDay( values.recurrence.rangeEnd ) );
+                    occurrence.find( '.rangeEnd' ).val( parseDateDay( values.rangeEnd ) );
                     occurrence.find( '.rangeEndType' )
                         .val( 'on' )
                         .change();

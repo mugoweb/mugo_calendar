@@ -3,7 +3,7 @@
 class MugoCalendarEventException extends MugoCalendarEvent
 {
 	public function __construct(
-		MugoCalendarEventDefinition $eventDefinition,
+		MugoCalendarExceptionEventDefinition $eventDefinition,
 		DateTime $occurrenceDay = null )
 	{
 		$this->mugoCalendarEventDefinition = $eventDefinition;
@@ -16,7 +16,7 @@ class MugoCalendarEventException extends MugoCalendarEvent
 			$this->end = clone $eventDefinition->getEndDateTime();
 		}
 
-		$this->id = $eventDefinition->instance;
+		$this->id = $eventDefinition->getFor();
 	}
 
 	/**

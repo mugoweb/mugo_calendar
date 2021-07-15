@@ -1,7 +1,6 @@
 {ezscript_require( array(
     'jquery.mugorecurringevent.js',
     'jquery.mugoexceptionevent.js',
-    'jquery.mugocalendar.js',
     'jquery.timepicker.min.js',
     'jquery.mugodatepair.js',
     'jquery.datepair.min.js',
