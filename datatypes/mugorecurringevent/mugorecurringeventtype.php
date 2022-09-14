@@ -220,8 +220,23 @@ class MugoRecurringEventType extends eZDataType
                 $originalContentObjectAttribute->attribute( 'version' )
             );
 
+            // When creating a translation, it will store one row per language
+            // However, this is run multiple times, so we must clean up the duplicates
+            // TODO: prevent the duplicates from being created in the first place
             if( !empty( $events ) )
             {
+                $existingMugoCalendarPersistentObjects = MugoCalendarPersistentObject::fetchListByAttribute(
+                    $contentObjectAttribute->attribute( 'id' ),
+                    $contentObjectAttribute->attribute( 'version' )
+                );
+
+                if( !empty( $existingMugoCalendarPersistentObjects ) )
+                {
+                    foreach( $existingMugoCalendarPersistentObjects as $entry )
+                    {
+                        $entry->remove();
+                    }
+                }
                 foreach( $events as $event )
                 {
                     $event->createNewVersion(
