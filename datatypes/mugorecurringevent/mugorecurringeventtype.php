@@ -355,6 +355,12 @@ class MugoRecurringEventType extends eZDataType
 
     /**
      *
+     * For now, we only support:
+     ** New object creation (otherwise the existing date entries will get duplicated)
+     ** Single occurrence
+     * You must pass a serialized array with:
+     ** rangeStart (date and time string, ISO 8601 preferred)
+     ** rangeEnd (date and time string, ISO 8601 preferred)
      * @param eZContentObjectAttribute $objectAttribute
      * @param string $string
      * @return boolean
@@ -365,9 +371,26 @@ class MugoRecurringEventType extends eZDataType
 
         if( !empty( $definition ) )
         {
-            $contentObjectAttribute->setAttribute( 'data_int', strtotime( $definition[ 'rangeStart' ] ) );
-            $contentObjectAttribute->setAttribute( 'data_float', strtotime( $definition[ 'rangeEnd' ] ) );
-            $contentObjectAttribute->setAttribute( 'data_text', $string );
+            $eventRow = array(
+                'start' => strtotime( $definition[ 'rangeStart' ] ),
+                'end' => strtotime( $definition[ 'rangeEnd' ] ),
+                'attribute_id' => $contentObjectAttribute->attribute( 'id' ),
+                'version' => $contentObjectAttribute->attribute( 'version' ),
+                'type' => MugoCalendarPersistentObject::TYPE_SINGLE,
+                'data' => null,
+            );
+
+            $mugoCalendarPersistentObject = new MugoCalendarPersistentObject( $eventRow );
+            if( $mugoCalendarPersistentObject->isValid() )
+            {
+                $mugoCalendarPersistentObject->store();
+            }
+            // Store a reference to the entry in the calendar table
+            $contentObjectAttribute->setContent(
+                $contentObjectAttribute->attribute( 'id' ) .
+                '_' .
+                $contentObjectAttribute->attribute( 'version' )
+            );
         }
 
         return true;
