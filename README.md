@@ -10,10 +10,10 @@ Supporting recurring events and exceptions.
 * Regenerate autoload map
 * Add permission to allow user groups to access the 'mugo_calendar' module
 
-## Customizations
-There is an ezpackage containing an example content class 'event'. It is located under the 'doc' directory.
-Import this class or create a new content class. Make sure that you *always* use both datatypes 'Mugo Calendar Event' and 'Mugo Recurring Event'
-in a content class.
+## Configuration
+The extension provides a new datatype "Mugo Recurring Event". Add this datatype
+as an attribute to one of your content classes. It will allow you to work
+with calendar events in context of this content class.
 
 ## Feature ideas
 * Allow user to specify how many instances he wants for a recurring event
