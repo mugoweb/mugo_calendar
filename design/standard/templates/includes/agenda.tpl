@@ -39,16 +39,20 @@
     {if $parent_node_id}
         {def $events = fetch( 'mugo_calendar', 'events', $fetch_events_parameters)}
 
-        <ul class="{$css_classes}">
-            {foreach $events as $event}
-                <li>
-                    {node_view_gui
-                        content_node=$event.object.main_node
-                        view=$view
-                        event=$event
-                    }
-                </li>
-            {/foreach}
-        </ul>
+        {if $events|count()}
+            <ul class="{$css_classes}">
+                {foreach $events as $event}
+                    <li>
+                        {node_view_gui
+                            content_node=$event.object.main_node
+                            view=$view
+                            event=$event
+                        }
+                    </li>
+                {/foreach}
+            </ul>
+        {else}
+           No events found
+        {/if}
     {/if}
 {/if}

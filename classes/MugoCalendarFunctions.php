@@ -524,9 +524,8 @@ class MugoCalendarFunctions
                         $exceptionDefinition = $exceptions[0];
                         $exceptionDefinition->node = $exceptionNode;
 
-                        $exception = MugoCalendarEvent::constructByCalendarEventDefinition(
-							$exceptionDefinition
-						);
+						//TODO: this will break for skip exceptions
+						$exception = new MugoCalendarEvent( $exceptionDefinition );
 
                         if( $exception->getStart() )
                         {

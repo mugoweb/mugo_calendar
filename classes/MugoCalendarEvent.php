@@ -129,4 +129,120 @@ class MugoCalendarEvent
 
 		return $return;
 	}
+
+	/*
+	 *  Access in templates
+	 */
+
+	public function attributes() : array
+	{
+		return array(
+			'start',
+			'end',
+			'id',
+			'object',
+//TODO: support more attributes
+//			'attribute',
+//			'all_day_event',
+//			'recurrence',
+//			'type',
+//			'parent_id',
+//			'instance',
+//			'data',
+		);
+	}
+
+	/**
+	 * @param $attr
+	 * @param bool $noFunction
+	 * @return bool|eZContentObject|int
+	 */
+	public function attribute( $attr, $noFunction = false )
+	{
+		switch( $attr )
+		{
+			case 'start':
+				{
+					return is_object( $this->start ) ? $this->start->getTimestamp() : null;
+				}
+				break;
+
+			case 'end':
+				{
+					return is_object( $this->end ) ? $this->end->getTimestamp() : null;
+				}
+				break;
+
+			case 'object':
+				{
+					return $this->mugoCalendarEventDefinition->getContentObject();
+				}
+				break;
+
+//			case 'attribute':
+//				{
+//					return $this->objectAttribute;
+//				}
+//				break;
+
+//			case 'all_day_event':
+//				{
+//					return $this->isAllDay;
+//				}
+//				break;
+
+//			case 'recurrence':
+//				{
+//					return $this->recurrence;
+//				}
+//				break;
+
+//			case 'type':
+//				{
+//					$map = array(
+//						0 => 'undefined',
+//						1 => 'single',
+//						2 => 'recurring',
+//						3 => 'exception',
+//					);
+//
+//					return $map[ $this->type ];
+//				}
+//				break;
+
+//			case 'instance':
+//				{
+//					return $this->instance;
+//				}
+//				break;
+
+			case 'id':
+				{
+					return $this->id;
+				}
+				break;
+
+//			case 'data':
+//				{
+//					return $this->data;
+//				}
+//				break;
+		}
+	}
+
+	/**
+	 * @param $attr
+	 * @return bool
+	 */
+	public function hasAttribute( $attr )
+	{
+		return in_array( $attr, $this->attributes() );
+	}
+
+	// optional
+	public function setAttribute( $attr, $value )
+	{
+		$this->$attr = $value;
+	}
+
 }
