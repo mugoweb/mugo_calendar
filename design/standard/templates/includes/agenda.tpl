@@ -8,6 +8,7 @@
         $view : default is 'line'
         $limit: default is '100'
         $css_classes: class string
+	$show_fetched: default is true
 *}
 
 {if is_unset( $parent_node_id )}
@@ -25,13 +26,16 @@
 {if is_unset( $end_date )}
     {* cannot set it to null *}
 {/if}
+{if is_unset( $show_fetched )}
+    {set $show_fetched = true()}
+{/if}
 
 {def $fetch_events_parameters = hash(
     'start',          $start_date,
     'parent_node_id', $parent_node_id,
     'limit',          $limit,
 )}
-{if is_set($end_date)}
+{if is_set( $end_date )}
     {set $fetch_events_parameters = $fetch_events_parameters|merge( hash( 'end', $end_date ) )}
 {/if}
 
@@ -39,7 +43,7 @@
     {if $parent_node_id}
         {def $events = fetch( 'mugo_calendar', 'events', $fetch_events_parameters)}
 
-        {if $events|count()}
+        {if and( $events|count(), $show_fetched )}
             <ul class="{$css_classes}">
                 {foreach $events as $event}
                     <li>
