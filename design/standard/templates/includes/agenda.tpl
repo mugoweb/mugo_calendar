@@ -27,7 +27,7 @@
     {* cannot set it to null *}
 {/if}
 {if is_unset( $show_fetched )}
-    {set $show_fetched = true()}
+    {def $show_fetched = true()}
 {/if}
 
 {def $fetch_events_parameters = hash(
