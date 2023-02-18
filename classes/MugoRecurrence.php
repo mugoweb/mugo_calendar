@@ -299,7 +299,7 @@ class MugoRecurrence
      */
     public function describe( $dateFormat = '%Y-%m-%d' )
     {
-        $return = ezpI18n::tr( 'mugo_calendar_date_description', 'every' ) . ' ';
+        $return = ezpI18n::tr( 'mugo_calendar_date_description', 'Every' ) . ' ';
 
         if( $this->type == 'Weekly' )
         {
