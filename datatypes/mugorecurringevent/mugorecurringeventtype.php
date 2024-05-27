@@ -24,9 +24,6 @@ class MugoRecurringEventType extends eZDataType
      */
     function storeObjectAttribute( $contentObjectAttribute )
     {
-        $content = $contentObjectAttribute->content();
-        $contentObjectAttribute->setAttribute( 'data_text', $content );
-
         return true;
     }
 
