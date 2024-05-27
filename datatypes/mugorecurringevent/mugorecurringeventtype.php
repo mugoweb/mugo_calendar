@@ -127,14 +127,6 @@ class MugoRecurringEventType extends eZDataType
                 }
             }
         }
-        else
-        {
-            $contentObjectAttribute->setContent(
-                $contentObjectAttribute->attribute( 'id' ) .
-                '_' .
-                $contentObjectAttribute->attribute( 'version' )
-            );
-        }
 
         return true;
     }
