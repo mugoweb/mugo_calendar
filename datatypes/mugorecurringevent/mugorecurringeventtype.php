@@ -374,12 +374,6 @@ class MugoRecurringEventType extends eZDataType
             {
                 $mugoCalendarPersistentObject->store();
             }
-            // Store a reference to the entry in the calendar table
-            $contentObjectAttribute->setContent(
-                $contentObjectAttribute->attribute( 'id' ) .
-                '_' .
-                $contentObjectAttribute->attribute( 'version' )
-            );
         }
 
         return true;
