@@ -24,9 +24,6 @@ class MugoRecurringEventType extends eZDataType
      */
     function storeObjectAttribute( $contentObjectAttribute )
     {
-        $content = $contentObjectAttribute->content();
-        $contentObjectAttribute->setAttribute( 'data_text', $content );
-
         return true;
     }
 
@@ -129,14 +126,6 @@ class MugoRecurringEventType extends eZDataType
                     }
                 }
             }
-        }
-        else
-        {
-            $contentObjectAttribute->setContent(
-                $contentObjectAttribute->attribute( 'id' ) .
-                '_' .
-                $contentObjectAttribute->attribute( 'version' )
-            );
         }
 
         return true;
@@ -385,12 +374,6 @@ class MugoRecurringEventType extends eZDataType
             {
                 $mugoCalendarPersistentObject->store();
             }
-            // Store a reference to the entry in the calendar table
-            $contentObjectAttribute->setContent(
-                $contentObjectAttribute->attribute( 'id' ) .
-                '_' .
-                $contentObjectAttribute->attribute( 'version' )
-            );
         }
 
         return true;
