@@ -12,8 +12,8 @@
             <translation>mois</translation>
         </message>
         <message>
-            <source>every</source>
-            <translation>chaque</translation>
+            <source>Every</source>
+            <translation>Chaque</translation>
         </message>
         <message>
             <source>week</source>
