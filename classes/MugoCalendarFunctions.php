@@ -64,10 +64,11 @@ class MugoCalendarFunctions
         {
             uksort($return, function($keyA, $keyB)
             {
-                list($dateA, $objectIdA) = explode('-', $keyA);
-                list($dateB, $objectIdB) = explode('-', $keyB);
+                // $result key set in MugoCalendarEvent constructor (id prop)
+                list($persistentObjectIdA, $timestampA) = explode('-', $keyA);
+                list($persistentObjectIdB, $timestampB) = explode('-', $keyB);
 
-                return (int) $dateA - (int) $dateB;
+                return (int) $timestampA - (int) $timestampB;
             });
         }
 
